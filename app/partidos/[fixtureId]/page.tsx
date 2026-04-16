@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { LiveRefresher } from '@/components/live-refresher'
+import { Chronicle } from '@/components/chronicle'
 import { getFixture, getHeadToHead } from '@/lib/sportmonks/fixtures'
 import { formatTime } from '@/lib/utils'
 
@@ -124,6 +125,17 @@ export default async function FixturePage({ params: { fixtureId } }: PageProps) 
             </div>
           </div>
         </section>
+
+        {/* AI Chronicle — only for finished matches */}
+        {fixture.state?.developer_name === 'FT' && (
+          <Chronicle
+            fixtureId={fixture.id}
+            homeTeam={home?.name}
+            awayTeam={away?.name}
+            homeScore={homeScore}
+            awayScore={awayScore}
+          />
+        )}
 
         {/* Events */}
         {events && events.length > 0 && (

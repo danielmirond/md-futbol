@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
+import { FavoriteButton } from '@/components/favorite-button'
 import { getLeague } from '@/lib/sportmonks/leagues'
 import { getCurrentSeasonByLeague, getStandingsBySeason } from '@/lib/sportmonks/standings'
 import { getFixturesByLeague } from '@/lib/sportmonks/fixtures'
@@ -67,12 +68,13 @@ export default async function LeaguePage({ params: { leagueId } }: PageProps) {
                 className="shrink-0 bg-white p-2"
               />
             )}
-            <div>
+            <div className="flex-1 min-w-0">
               <div className="eyebrow text-md mb-2">{league.short_code || 'COMPETICIÓN'}</div>
               <h1 className="font-display font-bold text-4xl md:text-6xl uppercase tracking-tight">
                 {league.name}
               </h1>
             </div>
+            <FavoriteButton type="league" id={league.id} name={league.name} imagePath={league.image_path} size="lg" />
           </div>
         </section>
 

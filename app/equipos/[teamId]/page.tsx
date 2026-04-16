@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
+import { FavoriteButton } from '@/components/favorite-button'
 import { getTeam, getTeamSquad, getTeamFixtures } from '@/lib/sportmonks/teams'
 
 export const revalidate = 600
@@ -75,9 +76,12 @@ export default async function TeamPage({ params: { teamId } }: PageProps) {
               />
             )}
             <div className="flex-1 min-w-0">
-              <div className="eyebrow text-md mb-2">
-                {team.country?.name?.toUpperCase() || ''}
-                {team.founded ? ` · FUNDADO EN ${team.founded}` : ''}
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="eyebrow text-md">
+                  {team.country?.name?.toUpperCase() || ''}
+                  {team.founded ? ` · FUNDADO EN ${team.founded}` : ''}
+                </div>
+                <FavoriteButton type="team" id={team.id} name={team.name} imagePath={team.image_path} size="lg" />
               </div>
               <h1 className="font-display font-bold text-4xl md:text-6xl uppercase tracking-tight">
                 {team.name}

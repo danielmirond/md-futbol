@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { FavoriteButton } from '@/components/favorite-button'
 import { getPlayer } from '@/lib/sportmonks/players'
 
 export const revalidate = 3600
@@ -59,9 +60,12 @@ export default async function PlayerPage({ params: { playerId } }: PageProps) {
                 <div className="w-[140px] h-[140px] bg-border" />
               )}
             </div>
-            <div className="min-w-0">
-              <div className="eyebrow text-md mb-2">
-                {player.position?.name?.toUpperCase() || 'JUGADOR'}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="eyebrow text-md">
+                  {player.position?.name?.toUpperCase() || 'JUGADOR'}
+                </div>
+                <FavoriteButton type="player" id={player.id} name={player.display_name} imagePath={player.image_path} size="lg" />
               </div>
               <h1 className="font-display font-bold text-3xl md:text-5xl uppercase tracking-tight leading-tight">
                 {player.display_name}
