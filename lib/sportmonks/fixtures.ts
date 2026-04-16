@@ -2,7 +2,6 @@ import { smFetch } from './client'
 import type { SmFixture } from './types'
 
 export async function getFixturesByDate(date: string): Promise<SmFixture[]> {
-  // date format: YYYY-MM-DD
   const res = await smFetch<{ data: SmFixture[] }>(`/fixtures/date/${date}`, {
     include: 'participants;scores;league;state;round',
     per_page: 100,
@@ -32,11 +31,40 @@ export async function getFixturesByLeague(leagueId: number, seasonId?: number): 
 export async function getFixture(id: number): Promise<SmFixture | null> {
   try {
     const res = await smFetch<{ data: SmFixture }>(`/fixtures/${id}`, {
-      include: 'participants;scores;league;state;round;venue;events;lineups',
+      include: 'participants;scores;league;state;round;venue;events.type;events.participant;lineups.player;statistics.type',
       revalidate: 60,
     })
     return res.data
   } catch {
     return null
+  }
+}
+
+export async function getHeadToHead(team1Id: number, team2Id: number): Promise<SmFixture[]> {
+  try {
+    const res = await smFetch<{ data: SmFixture[] }>(
+      `/fixtures/head-to-head/${team1Id}/${team2Id}`,
+      {
+        include: 'participants;scores;league;state',
+        per_page: 10,
+        revalidate: 3600,
+      },
+    )
+    return res.data
+  } catch {
+    return []
+  }
+}
+
+export async function getLiveFixtures(): Promise<SmFixture[]> {
+  try {
+    const res = await smFetch<{ data: SmFixture[] }>(`/livescores/inplay`, {
+      include: 'participants;scores;league;state;round',
+      per_page: 50,
+      revalidate: 15,
+    })
+    return res.data
+  } catch {
+    return []
   }
 }
