@@ -43,6 +43,7 @@ export default async function LeaguePage({ params: { leagueId } }: PageProps) {
   }
 
   const seasonId = await getCurrentSeasonByLeague(id)
+  const accessible = seasonId !== null
   const [standings, fixtures, topScorers] = await Promise.all([
     seasonId ? getStandingsBySeason(seasonId).catch(() => []) : Promise.resolve([]),
     getFixturesByLeague(id, seasonId || undefined).catch(() => []),
@@ -50,6 +51,7 @@ export default async function LeaguePage({ params: { leagueId } }: PageProps) {
   ])
 
   const sortedStandings = [...standings].sort((a, b) => (a.position || 99) - (b.position || 99))
+  const isCupFormat = league.sub_type?.includes('cup')
 
   return (
     <>
@@ -82,9 +84,24 @@ export default async function LeaguePage({ params: { leagueId } }: PageProps) {
           {/* Standings */}
           <div className="lg:col-span-2">
             <h2 className="md-heading mb-4">Clasificación</h2>
-            {sortedStandings.length === 0 ? (
-              <div className="md-card text-center py-8 text-ink3 text-sm">
-                Clasificación no disponible.
+            {!accessible ? (
+              <div className="md-card py-8 text-center">
+                <div className="eyebrow mb-2">⚠ NO DISPONIBLE</div>
+                <p className="font-sans text-ink2 text-sm max-w-md mx-auto">
+                  Esta competición no está incluida en el plan actual de SportMonks.
+                  Upgrade necesario para acceder a sus datos.
+                </p>
+              </div>
+            ) : sortedStandings.length === 0 ? (
+              <div className="md-card py-8 text-center">
+                <div className="eyebrow mb-2">
+                  {isCupFormat ? '🏆 FORMATO DE COPA' : 'SIN DATOS'}
+                </div>
+                <p className="font-sans text-ink2 text-sm max-w-md mx-auto">
+                  {isCupFormat
+                    ? 'Competición eliminatoria sin clasificación lineal. Consulta los partidos para ver el progreso.'
+                    : 'La clasificación de esta competición aún no está disponible.'}
+                </p>
               </div>
             ) : (
               <div className="bg-paper border border-border overflow-x-auto">
