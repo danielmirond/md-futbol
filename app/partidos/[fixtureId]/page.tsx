@@ -87,13 +87,23 @@ export default async function FixturePage({ params: { fixtureId } }: PageProps) 
         <section className="bg-md-black text-white relative">
           <div className="md-bar" />
           <div className="p-6 md:p-10">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
               <div className="eyebrow text-md">
                 {fixture.league?.name} {fixture.round?.name ? `· J${fixture.round.name}` : ''}
+                {fixture.leg ? ` · IDA/VUELTA ${fixture.leg}` : ''}
               </div>
               {isLive && <span className="pill pill-live">● {fixture.state?.short_name}</span>}
               {fixture.state?.developer_name === 'FT' && <span className="pill pill-finished">FINAL</span>}
+              {fixture.state?.developer_name === 'AET' && <span className="pill pill-finished">PRÓRROGA</span>}
             </div>
+
+            {fixture.result_info && (
+              <div className="mb-4 text-center">
+                <span className="inline-block bg-accent text-md-black font-display font-bold uppercase text-xs md:text-sm tracking-wider px-4 py-2">
+                  🏆 {fixture.result_info}
+                </span>
+              </div>
+            )}
 
             <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 md:gap-10">
               <Link href={`/equipos/${home?.id}`} className="flex flex-col items-center text-center hover:text-md">

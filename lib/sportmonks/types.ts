@@ -42,6 +42,8 @@ export interface SmFixture {
   result_info: string | null
   length: number
   venue_id: number | null
+  leg?: string | null              // e.g. "1/2", "2/2"
+  aggregate_id?: number | null     // Set when match is part of a 2-leg tie
   participants?: SmTeam[]
   scores?: SmScore[]
   league?: SmLeague
