@@ -4,6 +4,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
 import { FavoriteButton } from '@/components/favorite-button'
+import { LeagueGoalsHeatmap } from '@/components/league-goals-heatmap'
 import { getLeague } from '@/lib/sportmonks/leagues'
 import { getCurrentSeasonByLeague, getStandingsBySeason } from '@/lib/sportmonks/standings'
 import { getFixturesByLeague } from '@/lib/sportmonks/fixtures'
@@ -79,6 +80,9 @@ export default async function LeaguePage({ params: { leagueId } }: PageProps) {
             <FavoriteButton type="league" id={league.id} name={league.name} imagePath={league.image_path} size="lg" />
           </div>
         </section>
+
+        {/* League goals heatmap — only show if accessible */}
+        {accessible && <LeagueGoalsHeatmap leagueId={id} />}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Standings */}

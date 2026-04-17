@@ -4,6 +4,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { LiveRefresher } from '@/components/live-refresher'
 import { Chronicle } from '@/components/chronicle'
+import { MatchTimelineHeatmap } from '@/components/match-timeline-heatmap'
 import { getFixture, getHeadToHead } from '@/lib/sportmonks/fixtures'
 import { formatTime } from '@/lib/utils'
 
@@ -185,6 +186,19 @@ export default async function FixturePage({ params: { fixtureId } }: PageProps) 
                 </div>
               </div>
             </div>
+          </section>
+        )}
+
+        {/* Timeline heatmap */}
+        {events && events.length > 0 && home && away && (
+          <section>
+            <MatchTimelineHeatmap
+              events={events}
+              homeTeamId={home.id}
+              awayTeamId={away.id}
+              homeTeamName={home.name}
+              awayTeamName={away.name}
+            />
           </section>
         )}
 

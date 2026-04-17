@@ -2,6 +2,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
 import { DayCarousel } from '@/components/day-carousel'
+import { ScheduleHeatmap } from '@/components/schedule-heatmap'
 import { getFixturesByDate } from '@/lib/sportmonks/fixtures'
 
 export const dynamic = 'force-dynamic'
@@ -59,6 +60,13 @@ export default async function MatchesPage({ searchParams }: PageProps) {
         </section>
 
         <DayCarousel current={date} />
+
+        {sorted.length > 0 && (
+          <ScheduleHeatmap
+            fixtures={sorted}
+            title={`Horarios · ${displayDate}`}
+          />
+        )}
 
         {sorted.length === 0 ? (
           <div className="md-card text-center py-12">
