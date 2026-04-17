@@ -1,7 +1,7 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
-import { DatePicker } from '@/components/date-picker'
+import { DayCarousel } from '@/components/day-carousel'
 import { getFixturesByDate } from '@/lib/sportmonks/fixtures'
 
 export const dynamic = 'force-dynamic'
@@ -29,26 +29,43 @@ export default async function MatchesPage({ searchParams }: PageProps) {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   })
 
+  const isToday = date === today
+  const isYesterday = (() => {
+    const y = new Date()
+    y.setDate(y.getDate() - 1)
+    return date === y.toISOString().split('T')[0]
+  })()
+  const isTomorrow = (() => {
+    const t = new Date()
+    t.setDate(t.getDate() + 1)
+    return date === t.toISOString().split('T')[0]
+  })()
+
+  const shortLabel = isToday ? 'HOY' : isYesterday ? 'AYER' : isTomorrow ? 'MAÑANA' : displayDate.toUpperCase()
+
   return (
     <>
       <Header />
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         <section className="bg-md-black text-white p-6 md:p-10">
           <div className="md-bar -mx-6 md:-mx-10 -mt-6 md:-mt-10 mb-6" />
-          <div className="eyebrow text-md mb-2">PARTIDOS · {displayDate.toUpperCase()}</div>
+          <div className="eyebrow text-md mb-2">PARTIDOS · {shortLabel}</div>
           <h1 className="font-display font-bold text-4xl md:text-6xl uppercase tracking-tight mb-4">
             {sorted.length} <span className="text-md">partidos</span>
           </h1>
           <p className="font-sans text-white/60">
-            {byLeague.size} competiciones
+            {byLeague.size} competiciones · {displayDate}
           </p>
         </section>
 
-        <DatePicker current={date} />
+        <DayCarousel current={date} />
 
         {sorted.length === 0 ? (
-          <div className="md-card text-center py-12 eyebrow">
-            No hay partidos en esta fecha.
+          <div className="md-card text-center py-12">
+            <div className="eyebrow mb-2">SIN PARTIDOS</div>
+            <p className="font-sans text-ink2 text-sm">
+              No hay partidos programados para {displayDate}.
+            </p>
           </div>
         ) : (
           Array.from(byLeague.entries()).map(([leagueId, matches]) => (

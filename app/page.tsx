@@ -3,23 +3,46 @@ import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
-import { getTodayFixtures } from '@/lib/sportmonks/fixtures'
+import { getFixturesByDate, getTodayFixtures } from '@/lib/sportmonks/fixtures'
 import { getFeaturedLeagues, FEATURED_LEAGUE_IDS } from '@/lib/sportmonks/leagues'
 
 export const revalidate = 60
 
+function yesterdayISO(): string {
+  const d = new Date()
+  d.setDate(d.getDate() - 1)
+  return d.toISOString().split('T')[0]
+}
+
+function tomorrowISO(): string {
+  const d = new Date()
+  d.setDate(d.getDate() + 1)
+  return d.toISOString().split('T')[0]
+}
+
 export default async function HomePage() {
-  const [fixtures, leagues] = await Promise.all([
+  const [today, yesterday, tomorrow, leagues] = await Promise.all([
     getTodayFixtures().catch(() => []),
+    getFixturesByDate(yesterdayISO()).catch(() => []),
+    getFixturesByDate(tomorrowISO()).catch(() => []),
     getFeaturedLeagues().catch(() => []),
   ])
 
-  // Filter fixtures to featured leagues for the main list
-  const featuredFixtures = fixtures
+  // Filter featured
+  const featuredToday = today
     .filter((f) => FEATURED_LEAGUE_IDS.includes(f.league_id))
     .sort((a, b) => a.starting_at.localeCompare(b.starting_at))
 
-  const liveFixtures = featuredFixtures.filter((f) => {
+  const featuredYesterday = yesterday
+    .filter((f) => FEATURED_LEAGUE_IDS.includes(f.league_id))
+    .filter((f) => f.state?.developer_name === 'FT' || f.state?.developer_name === 'AET')
+    .sort((a, b) => b.starting_at.localeCompare(a.starting_at))
+
+  const featuredTomorrow = tomorrow
+    .filter((f) => FEATURED_LEAGUE_IDS.includes(f.league_id))
+    .sort((a, b) => a.starting_at.localeCompare(b.starting_at))
+
+  const liveFixtures = featuredToday.filter((f) => {
     const dn = f.state?.developer_name || ''
     return dn.includes('INPLAY') || dn === 'LIVE' || dn === 'HT'
   })
@@ -38,8 +61,7 @@ export default async function HomePage() {
               En directo. En serio.
             </h1>
             <p className="font-sans text-white/60 mt-6 max-w-2xl">
-              La Liga, Champions, Premier, Bundesliga, Serie A y Ligue 1. Marcadores, clasificaciones y estadísticas
-              en vivo con datos de SportMonks.
+              La Liga, Champions, Europa League y Conference. Marcadores, clasificaciones y crónicas con IA en tiempo real.
             </p>
           </div>
         </section>
@@ -56,27 +78,110 @@ export default async function HomePage() {
           </section>
         )}
 
+        {/* Quick day nav — links to /partidos with date query */}
+        <section>
+          <h2 className="md-heading mb-4">Calendario</h2>
+          <div className="grid grid-cols-3 gap-3">
+            <Link
+              href={`/partidos?d=${yesterdayISO()}`}
+              className="md-card hover:border-md transition-colors text-center"
+            >
+              <div className="eyebrow mb-1">AYER</div>
+              <div className="font-display font-bold text-3xl md:text-4xl tabular-nums">
+                {featuredYesterday.length}
+              </div>
+              <div className="font-mono text-[10px] text-ink3 uppercase mt-1">resultados</div>
+            </Link>
+            <Link
+              href="/partidos"
+              className="bg-md-black text-white p-4 border border-md-black hover:bg-md hover:border-md transition-colors text-center relative overflow-hidden"
+            >
+              <div className="md-bar absolute top-0 left-0 right-0" />
+              <div className="eyebrow text-md mb-1">HOY</div>
+              <div className="font-display font-bold text-3xl md:text-4xl tabular-nums">
+                {featuredToday.length}
+              </div>
+              <div className="font-mono text-[10px] text-white/60 uppercase mt-1">partidos</div>
+            </Link>
+            <Link
+              href={`/partidos?d=${tomorrowISO()}`}
+              className="md-card hover:border-md transition-colors text-center"
+            >
+              <div className="eyebrow mb-1">MAÑANA</div>
+              <div className="font-display font-bold text-3xl md:text-4xl tabular-nums">
+                {featuredTomorrow.length}
+              </div>
+              <div className="font-mono text-[10px] text-ink3 uppercase mt-1">programados</div>
+            </Link>
+          </div>
+        </section>
+
+        {/* Yesterday results */}
+        {featuredYesterday.length > 0 && (
+          <section>
+            <div className="flex items-baseline justify-between mb-4 flex-wrap gap-2">
+              <h2 className="md-heading">Resultados de ayer</h2>
+              <Link
+                href={`/partidos?d=${yesterdayISO()}`}
+                className="font-mono text-xs text-md uppercase tracking-wider hover:underline"
+              >
+                VER TODOS →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {featuredYesterday.slice(0, 6).map((f) => (
+                <FixtureCard key={f.id} fixture={f} />
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Today fixtures */}
         <section>
-          <div className="flex items-baseline justify-between mb-4">
+          <div className="flex items-baseline justify-between mb-4 flex-wrap gap-2">
             <h2 className="md-heading">Partidos de hoy</h2>
             <span className="font-mono text-xs text-ink3">
-              {featuredFixtures.length} partidos · competiciones destacadas
+              {featuredToday.length} partidos · competiciones destacadas
             </span>
           </div>
 
-          {featuredFixtures.length === 0 ? (
+          {featuredToday.length === 0 ? (
             <div className="md-card text-center py-12">
               <p className="font-sans text-ink2">No hay partidos hoy en las competiciones destacadas.</p>
+              {featuredTomorrow.length > 0 && (
+                <Link href={`/partidos?d=${tomorrowISO()}`} className="btn-ghost inline-block mt-4">
+                  VER MAÑANA →
+                </Link>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {featuredFixtures.map((f) => (
+              {featuredToday.map((f) => (
                 <FixtureCard key={f.id} fixture={f} />
               ))}
             </div>
           )}
         </section>
+
+        {/* Tomorrow preview */}
+        {featuredTomorrow.length > 0 && (
+          <section>
+            <div className="flex items-baseline justify-between mb-4 flex-wrap gap-2">
+              <h2 className="md-heading">Mañana</h2>
+              <Link
+                href={`/partidos?d=${tomorrowISO()}`}
+                className="font-mono text-xs text-md uppercase tracking-wider hover:underline"
+              >
+                VER TODOS →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {featuredTomorrow.slice(0, 4).map((f) => (
+                <FixtureCard key={f.id} fixture={f} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Featured leagues grid */}
         <section>
