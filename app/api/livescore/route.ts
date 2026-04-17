@@ -9,8 +9,10 @@ interface LiveMatch {
   leagueName: string
   leagueId: number
   leagueImage: string | null
+  homeId: number
   homeName: string
   homeImage: string | null
+  awayId: number
   awayName: string
   awayImage: string | null
   homeScore: number | null
@@ -47,8 +49,10 @@ function extractMatch(f: any): LiveMatch | null {
     leagueName: f.league?.name || '',
     leagueId: f.league_id,
     leagueImage: f.league?.image_path || null,
+    homeId: home.id,
     homeName: home.name,
     homeImage: home.image_path || null,
+    awayId: away.id,
     awayName: away.name,
     awayImage: away.image_path || null,
     homeScore,

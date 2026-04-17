@@ -3,14 +3,18 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import confetti from 'canvas-confetti'
+import { getFavorites } from '@/lib/favorites'
 
 interface LiveMatch {
   id: number
   leagueName: string
   leagueId: number
   leagueImage: string | null
+  homeId?: number
   homeName: string
   homeImage: string | null
+  awayId?: number
   awayName: string
   awayImage: string | null
   homeScore: number | null
@@ -23,11 +27,59 @@ interface LiveMatch {
 interface GoalFlash {
   matchId: number
   team: 'home' | 'away'
+  favorite: boolean
   at: number
 }
 
 const DISMISSED_KEY = 'md-futbol:livescore-dismissed'
 const GOAL_FLASH_MS = 8000
+
+function fireConfetti() {
+  const colors = ['#E30613', '#FFC700', '#FFFFFF']
+  // Side bursts that last 2s
+  const duration = 2000
+  const end = Date.now() + duration
+  const shoot = () => {
+    confetti({
+      particleCount: 6,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0, y: 0.8 },
+      colors,
+      scalar: 0.9,
+      ticks: 200,
+    })
+    confetti({
+      particleCount: 6,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1, y: 0.8 },
+      colors,
+      scalar: 0.9,
+      ticks: 200,
+    })
+    if (Date.now() < end) requestAnimationFrame(shoot)
+  }
+  shoot()
+  // Central burst
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 },
+    colors,
+    startVelocity: 45,
+  })
+}
+
+function vibrateGoal() {
+  try {
+    if ('vibrate' in navigator) {
+      navigator.vibrate([120, 60, 120, 60, 300])
+    }
+  } catch {
+    // Silent
+  }
+}
 
 export function LivescoreTicker() {
   const [matches, setMatches] = useState<LiveMatch[]>([])
@@ -96,15 +148,22 @@ export function LivescoreTicker() {
 
         // Detect goals by comparing with previous snapshot
         const prev = prevScoresRef.current
+        const favorites = getFavorites()
+        const favoriteTeamIds = new Set(
+          favorites.filter((f) => f.type === 'team').map((f) => f.id),
+        )
+
         const newFlashes: GoalFlash[] = []
         for (const m of newMatches) {
           const p = prev.get(m.id)
           if (p && m.homeScore != null && m.awayScore != null) {
             if (m.homeScore > p.home) {
-              newFlashes.push({ matchId: m.id, team: 'home', at: Date.now() })
+              const isFav = !!m.homeId && favoriteTeamIds.has(m.homeId)
+              newFlashes.push({ matchId: m.id, team: 'home', favorite: isFav, at: Date.now() })
             }
             if (m.awayScore > p.away) {
-              newFlashes.push({ matchId: m.id, team: 'away', at: Date.now() })
+              const isFav = !!m.awayId && favoriteTeamIds.has(m.awayId)
+              newFlashes.push({ matchId: m.id, team: 'away', favorite: isFav, at: Date.now() })
             }
           }
         }
@@ -118,8 +177,16 @@ export function LivescoreTicker() {
 
         setMatches(newMatches)
         if (newFlashes.length > 0) {
-          setGoalFlashes((prev) => [...prev, ...newFlashes])
+          setGoalFlashes((prevFlashes) => [...prevFlashes, ...newFlashes])
           playGoalSound()
+
+          // If any scored team is a favorite → confetti + vibration!
+          const hasFav = newFlashes.some((f) => f.favorite)
+          if (hasFav) {
+            fireConfetti()
+            vibrateGoal()
+          }
+
           // Scroll the first goal into view
           setTimeout(() => {
             const el = document.querySelector(`[data-match-id="${newFlashes[0].matchId}"]`)

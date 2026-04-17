@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
+import { StaggerGrid } from '@/components/stagger-grid'
 import { getFixturesByDate, getTodayFixtures } from '@/lib/sportmonks/fixtures'
 import { getFeaturedLeagues, FEATURED_LEAGUE_IDS } from '@/lib/sportmonks/leagues'
 
@@ -70,11 +71,11 @@ export default async function HomePage() {
         {liveFixtures.length > 0 && (
           <section>
             <h2 className="md-heading mb-4 text-md">● EN VIVO AHORA · {liveFixtures.length}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 gap-3" stepMs={50}>
               {liveFixtures.slice(0, 6).map((f) => (
                 <FixtureCard key={f.id} fixture={f} />
               ))}
-            </div>
+            </StaggerGrid>
           </section>
         )}
 
@@ -128,11 +129,11 @@ export default async function HomePage() {
                 VER TODOS →
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 gap-3" stepMs={60} startDelayMs={100}>
               {featuredYesterday.slice(0, 6).map((f) => (
                 <FixtureCard key={f.id} fixture={f} />
               ))}
-            </div>
+            </StaggerGrid>
           </section>
         )}
 
@@ -155,11 +156,11 @@ export default async function HomePage() {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 gap-3" stepMs={60} startDelayMs={150}>
               {featuredToday.map((f) => (
                 <FixtureCard key={f.id} fixture={f} />
               ))}
-            </div>
+            </StaggerGrid>
           )}
         </section>
 
@@ -175,11 +176,11 @@ export default async function HomePage() {
                 VER TODOS →
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 gap-3" stepMs={60} startDelayMs={200}>
               {featuredTomorrow.slice(0, 4).map((f) => (
                 <FixtureCard key={f.id} fixture={f} />
               ))}
-            </div>
+            </StaggerGrid>
           </section>
         )}
 
