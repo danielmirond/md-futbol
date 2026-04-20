@@ -56,6 +56,29 @@ export async function getHeadToHead(team1Id: number, team2Id: number): Promise<S
   }
 }
 
+/**
+ * Get fixtures across the next N days (inclusive from today).
+ * Useful for upcoming-matches widgets.
+ */
+export async function getUpcomingFixturesAcrossDays(days: number = 3): Promise<SmFixture[]> {
+  const now = new Date()
+  const results: SmFixture[] = []
+  for (let i = 0; i < days; i++) {
+    const d = new Date(now)
+    d.setDate(d.getDate() + i)
+    const iso = d.toISOString().split('T')[0]
+    try {
+      const fs = await getFixturesByDate(iso)
+      results.push(...fs)
+    } catch {
+      // continue
+    }
+  }
+  // Filter future-only (remove already started today)
+  const future = results.filter((f) => new Date(f.starting_at).getTime() >= now.getTime() - 2 * 3600_000)
+  return future.sort((a, b) => a.starting_at.localeCompare(b.starting_at))
+}
+
 export async function getLiveFixtures(): Promise<SmFixture[]> {
   try {
     const res = await smFetch<{ data: SmFixture[] }>(`/livescores/inplay`, {
