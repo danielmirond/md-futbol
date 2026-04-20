@@ -77,42 +77,13 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Competition widget — 4 style variants */}
+        {/* Competition widget — editorial+classic hybrid */}
         {leagues.length > 0 && (
-          <section className="space-y-6">
-            <div>
-              <div className="eyebrow text-md mb-2">VARIANTE A · MD CLÁSICO</div>
-              <CompetitionWidget
-                variant="classic"
-                leagues={leagues}
-                fixtures={widgetFixtures.length > 0 ? widgetFixtures : upcoming.slice(0, 20)}
-              />
-            </div>
-            <div>
-              <div className="eyebrow text-md mb-2">VARIANTE B · GLASS (BLUR + ACENTO AMARILLO)</div>
-              <CompetitionWidget
-                variant="glass"
-                leagues={leagues}
-                fixtures={widgetFixtures.length > 0 ? widgetFixtures : upcoming.slice(0, 20)}
-              />
-            </div>
-            <div>
-              <div className="eyebrow text-md mb-2">VARIANTE C · NEON MINIMAL</div>
-              <CompetitionWidget
-                variant="neon"
-                leagues={leagues}
-                fixtures={widgetFixtures.length > 0 ? widgetFixtures : upcoming.slice(0, 20)}
-              />
-            </div>
-            <div>
-              <div className="eyebrow text-md mb-2">VARIANTE D · EDITORIAL LIGHT</div>
-              <CompetitionWidget
-                variant="editorial"
-                leagues={leagues}
-                fixtures={widgetFixtures.length > 0 ? widgetFixtures : upcoming.slice(0, 20)}
-              />
-            </div>
-          </section>
+          <CompetitionWidget
+            variant="editorial"
+            leagues={leagues}
+            fixtures={widgetFixtures.length > 0 ? widgetFixtures : upcoming.slice(0, 20)}
+          />
         )}
 
         {/* Live section */}

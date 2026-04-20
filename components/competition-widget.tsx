@@ -69,23 +69,24 @@ function useTheme(variant: WidgetVariant) {
         fade: 'bg-gradient-to-l from-black via-black/60 to-transparent',
       }
     case 'editorial':
+      // D+A mix: editorial light matches + dark dramatic tabs, rounded, shadows, glow
       return {
-        root: 'rounded-none overflow-hidden relative bg-paper text-ink border-t-4 border-b border-md border-b-border',
-        topBand: 'border-b border-border',
-        tabBase: 'px-5 py-3.5 min-w-[140px] text-left transition-colors',
-        tabIdle: 'hover:bg-surface',
-        tabActive: 'bg-surface',
-        tabLabel: 'font-serif italic text-[10px] tracking-normal text-ink2',
-        tabLabelIdle: 'text-ink2',
-        tabLabelActive: 'text-md',
+        root: 'rounded-xl overflow-hidden relative bg-paper text-ink shadow-[0_20px_60px_rgba(0,0,0,0.15)] ring-1 ring-border',
+        topBand: 'border-b-2 border-md bg-gradient-to-b from-md-black via-md-grey to-md-black text-white',
+        tabBase: 'px-5 py-3.5 min-w-[140px] text-left transition-all',
+        tabIdle: 'hover:bg-white/[0.05]',
+        tabActive: 'bg-white/[0.08]',
+        tabLabel: 'font-serif italic text-[10px] tracking-normal',
+        tabLabelIdle: 'text-white/50 group-hover:text-white/80',
+        tabLabelActive: 'text-accent',
         tabName: 'font-display font-bold uppercase text-sm leading-tight',
-        tabNameIdle: 'text-ink',
-        tabNameActive: 'text-md',
-        underline: 'absolute bottom-0 left-5 right-5 h-[2px] bg-md',
-        matchBand: 'bg-surface',
-        match: 'px-5 py-4 min-w-[230px] shrink-0 border-r border-border hover:bg-paper',
-        arrow: 'bg-md hover:bg-md-dark text-white',
-        fade: 'bg-gradient-to-l from-surface via-surface/70 to-transparent',
+        tabNameIdle: 'text-white/85 group-hover:text-white',
+        tabNameActive: 'text-white',
+        underline: 'absolute bottom-0 left-5 right-5 h-[3px] bg-gradient-to-r from-md via-accent to-md rounded-full shadow-[0_0_12px_rgba(227,6,19,0.6)]',
+        matchBand: 'bg-paper',
+        match: 'px-5 py-4 min-w-[230px] shrink-0 border-r border-border hover:bg-surface',
+        arrow: 'bg-md hover:bg-md-dark hover:scale-110 hover:shadow-[0_0_20px_rgba(227,6,19,0.5)] text-white',
+        fade: 'bg-gradient-to-l from-paper via-paper/70 to-transparent',
       }
     case 'classic':
     default:
