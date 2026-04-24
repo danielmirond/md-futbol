@@ -4,6 +4,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
 import { FavoriteButton } from '@/components/favorite-button'
+import { CalendarSubscribe } from '@/components/calendar-subscribe'
 import { LeagueGoalsHeatmap } from '@/components/league-goals-heatmap'
 import { getLeague } from '@/lib/sportmonks/leagues'
 import { getCurrentSeasonByLeague, getStandingsBySeason } from '@/lib/sportmonks/standings'
@@ -77,7 +78,10 @@ export default async function LeaguePage({ params: { leagueId } }: PageProps) {
                 {league.name}
               </h1>
             </div>
-            <FavoriteButton type="league" id={league.id} name={league.name} imagePath={league.image_path} size="lg" />
+            <div className="flex items-center gap-2">
+              <CalendarSubscribe icsPath={`/api/calendar/league/${league.id}`} label="Calendario" />
+              <FavoriteButton type="league" id={league.id} name={league.name} imagePath={league.image_path} size="lg" />
+            </div>
           </div>
         </section>
 

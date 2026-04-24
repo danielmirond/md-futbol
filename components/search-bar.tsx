@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 interface SearchResult {
   teams: { id: number; name: string; image_path: string | null }[]
@@ -11,11 +12,19 @@ interface SearchResult {
 }
 
 export function SearchBar() {
+  const router = useRouter()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLFormElement>(null)
+
+  const goToSearchPage = (q: string) => {
+    const trimmed = q.trim()
+    if (trimmed.length < 2) return
+    setOpen(false)
+    router.push(`/buscar?q=${encodeURIComponent(trimmed)}`)
+  }
 
   useEffect(() => {
     if (query.trim().length < 2) {
@@ -49,7 +58,15 @@ export function SearchBar() {
   const showDropdown = open && (loading || total > 0 || query.trim().length >= 2)
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-xs">
+    <form
+      ref={containerRef}
+      role="search"
+      onSubmit={(e) => {
+        e.preventDefault()
+        goToSearchPage(query)
+      }}
+      className="relative w-full max-w-xs"
+    >
       <input
         type="search"
         value={query}
@@ -130,8 +147,18 @@ export function SearchBar() {
               ))}
             </div>
           )}
+
+          {query.trim().length >= 2 && (
+            <button
+              type="button"
+              onClick={() => goToSearchPage(query)}
+              className="w-full bg-md-black text-white font-display font-semibold uppercase text-xs tracking-wider px-3 py-2.5 hover:bg-md transition-colors"
+            >
+              Ver todos los resultados →
+            </button>
+          )}
         </div>
       )}
-    </div>
+    </form>
   )
 }

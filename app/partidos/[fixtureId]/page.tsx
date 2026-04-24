@@ -5,6 +5,7 @@ import { Footer } from '@/components/footer'
 import { LiveRefresher } from '@/components/live-refresher'
 import { Chronicle } from '@/components/chronicle'
 import { MatchTimelineHeatmap } from '@/components/match-timeline-heatmap'
+import { H2HSummary } from '@/components/h2h-summary'
 import { getFixture, getHeadToHead } from '@/lib/sportmonks/fixtures'
 import { formatTime } from '@/lib/utils'
 
@@ -236,37 +237,17 @@ export default async function FixturePage({ params: { fixtureId } }: PageProps) 
           </section>
         )}
 
-        {/* Head-to-head */}
-        {h2h.length > 0 && (
-          <section>
-            <h2 className="md-heading mb-4">Cara a cara · Últimos {h2h.length}</h2>
-            <div className="bg-paper border border-border divide-y divide-border">
-              {h2h.map((m: any) => {
-                const mHome = m.participants?.find((p: any) => p.meta?.location === 'home')
-                const mAway = m.participants?.find((p: any) => p.meta?.location === 'away')
-                const mHs = m.scores?.find((s: any) => s.score?.participant === 'home' && s.description === 'CURRENT')?.score.goals
-                const mAs = m.scores?.find((s: any) => s.score?.participant === 'away' && s.description === 'CURRENT')?.score.goals
-                return (
-                  <Link key={m.id} href={`/partidos/${m.id}`} className="flex items-center gap-4 p-3 hover:bg-surface">
-                    <div className="eyebrow w-24 truncate">
-                      {new Date(m.starting_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </div>
-                    <div className="flex-1 flex items-center gap-3 justify-end min-w-0">
-                      <span className="font-display font-semibold uppercase text-sm truncate">{mHome?.name}</span>
-                      {mHome?.image_path && <Image src={mHome.image_path} alt={mHome.name} width={20} height={20} />}
-                    </div>
-                    <div className="font-display font-bold text-lg tabular-nums w-16 text-center">
-                      {mHs ?? '-'} : {mAs ?? '-'}
-                    </div>
-                    <div className="flex-1 flex items-center gap-3 min-w-0">
-                      {mAway?.image_path && <Image src={mAway.image_path} alt={mAway.name} width={20} height={20} />}
-                      <span className="font-display font-semibold uppercase text-sm truncate">{mAway?.name}</span>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          </section>
+        {/* Head-to-head (enriched) */}
+        {h2h.length > 0 && home && away && (
+          <H2HSummary
+            fixtures={h2h}
+            homeTeamId={home.id}
+            homeTeamName={home.name}
+            homeImagePath={home.image_path}
+            awayTeamId={away.id}
+            awayTeamName={away.name}
+            awayImagePath={away.image_path}
+          />
         )}
 
         {/* Info */}
