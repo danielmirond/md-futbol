@@ -227,6 +227,40 @@ export default async function HomePage() {
             ))}
           </div>
         </section>
+
+        {/* More sports promo strip */}
+        <section className="bg-md-black text-white relative overflow-hidden">
+          <div className="md-bar" />
+          <div className="p-6 md:p-10 grid md:grid-cols-[1fr_auto] items-center gap-6">
+            <div>
+              <div className="eyebrow text-md mb-2">TAMBIÉN EN MD</div>
+              <h2 className="font-display font-bold text-3xl md:text-5xl uppercase tracking-tight leading-[0.95]">
+                No solo <span className="text-md">fútbol</span>.
+              </h2>
+              <p className="font-sans text-white/60 mt-3 max-w-xl">
+                NBA, NFL, tenis, Fórmula 1, golf, UFC, MLB, NHL y más.
+                En tiempo real, con el mismo estilo editorial.
+              </p>
+              <div className="flex items-center gap-2 mt-5 flex-wrap">
+                {['nba', 'atp', 'f1', 'nfl', 'pga', 'ufc', 'mlb', 'nhl'].map((slug) => (
+                  <Link
+                    key={slug}
+                    href={`/deportes/${slug}`}
+                    className="font-display uppercase text-xs tracking-wider border border-white/30 text-white px-3 py-1.5 hover:bg-white hover:text-md-black transition-colors"
+                  >
+                    {slug.toUpperCase()}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <Link
+              href="/deportes"
+              className="btn-md font-display font-bold text-base md:text-lg px-6 py-3 whitespace-nowrap"
+            >
+              Todos los deportes →
+            </Link>
+          </div>
+        </section>
       </main>
       <Footer />
     </>
