@@ -4,6 +4,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
 import { FavoriteButton } from '@/components/favorite-button'
+import { CalendarSubscribe } from '@/components/calendar-subscribe'
 import { getTeam, getTeamSquad, getTeamFixtures } from '@/lib/sportmonks/teams'
 
 export const revalidate = 600
@@ -81,7 +82,10 @@ export default async function TeamPage({ params: { teamId } }: PageProps) {
                   {team.country?.name?.toUpperCase() || ''}
                   {team.founded ? ` · FUNDADO EN ${team.founded}` : ''}
                 </div>
-                <FavoriteButton type="team" id={team.id} name={team.name} imagePath={team.image_path} size="lg" />
+                <div className="flex items-center gap-2">
+                  <CalendarSubscribe icsPath={`/api/calendar/team/${team.id}`} label="Calendario" />
+                  <FavoriteButton type="team" id={team.id} name={team.name} imagePath={team.image_path} size="lg" />
+                </div>
               </div>
               <h1 className="font-display font-bold text-4xl md:text-6xl uppercase tracking-tight">
                 {team.name}

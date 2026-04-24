@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { SearchBar } from './search-bar'
 import { LivescoreTicker } from './livescore-ticker'
+import { ThemeToggle } from './theme-toggle'
 
 export function Header() {
   return (
@@ -20,6 +21,7 @@ export function Header() {
               { href: '/ligas', label: 'Ligas' },
               { href: '/partidos', label: 'Partidos' },
               { href: '/en-directo', label: 'En directo' },
+              { href: '/goleadores', label: 'Goleadores' },
               { href: '/favoritos', label: '★ Favoritos' },
             ].map(({ href, label }) => (
               <Link
@@ -32,8 +34,9 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex-1 flex justify-end min-w-0">
+          <div className="flex-1 flex justify-end items-center gap-2 min-w-0">
             <SearchBar />
+            <ThemeToggle />
           </div>
         </div>
       </div>

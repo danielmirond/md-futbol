@@ -1,15 +1,15 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { FixtureCard } from '@/components/fixture-card'
 import { DayCarousel } from '@/components/day-carousel'
 import { ScheduleHeatmap } from '@/components/schedule-heatmap'
+import { FilterableMatches } from '@/components/filterable-matches'
 import { getFixturesByDate } from '@/lib/sportmonks/fixtures'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 60
 
 interface PageProps {
-  searchParams: { d?: string }
+  searchParams: { d?: string; liga?: string; estado?: string; fav?: string }
 }
 
 export default async function MatchesPage({ searchParams }: PageProps) {
@@ -18,13 +18,6 @@ export default async function MatchesPage({ searchParams }: PageProps) {
 
   const fixtures = await getFixturesByDate(date).catch(() => [])
   const sorted = [...fixtures].sort((a, b) => a.starting_at.localeCompare(b.starting_at))
-
-  const byLeague = new Map<number, typeof sorted>()
-  for (const f of sorted) {
-    const id = f.league_id
-    if (!byLeague.has(id)) byLeague.set(id, [])
-    byLeague.get(id)!.push(f)
-  }
 
   const displayDate = new Date(date + 'T12:00:00').toLocaleDateString('es-ES', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
@@ -43,6 +36,7 @@ export default async function MatchesPage({ searchParams }: PageProps) {
   })()
 
   const shortLabel = isToday ? 'HOY' : isYesterday ? 'AYER' : isTomorrow ? 'MAÑANA' : displayDate.toUpperCase()
+  const leagueCount = new Set(sorted.map((f) => f.league_id)).size
 
   return (
     <>
@@ -55,7 +49,7 @@ export default async function MatchesPage({ searchParams }: PageProps) {
             {sorted.length} <span className="text-md">partidos</span>
           </h1>
           <p className="font-sans text-white/60">
-            {byLeague.size} competiciones · {displayDate}
+            {leagueCount} competiciones · {displayDate}
           </p>
         </section>
 
@@ -76,18 +70,7 @@ export default async function MatchesPage({ searchParams }: PageProps) {
             </p>
           </div>
         ) : (
-          Array.from(byLeague.entries()).map(([leagueId, matches]) => (
-            <section key={leagueId}>
-              <h2 className="md-heading mb-4">
-                {matches[0].league?.name || `Liga #${leagueId}`}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {matches.map((f) => (
-                  <FixtureCard key={f.id} fixture={f} />
-                ))}
-              </div>
-            </section>
-          ))
+          <FilterableMatches fixtures={sorted} />
         )}
       </main>
       <Footer />

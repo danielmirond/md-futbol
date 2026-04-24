@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { FavoriteButton } from '@/components/favorite-button'
-import { getPlayer } from '@/lib/sportmonks/players'
+import { getPlayer, statValue, PLAYER_STAT_KEYS } from '@/lib/sportmonks/players'
 
 export const revalidate = 3600
 
@@ -39,6 +39,43 @@ export default async function PlayerPage({ params: { playerId } }: PageProps) {
 
   const age = calculateAge(player.date_of_birth)
   const currentTeam = player.teams?.[0]?.team
+
+  // Pick the most relevant stat block: prefer current season, else most recent with values
+  const stats = (player.statistics || []).filter((s) => s.has_values)
+  const primaryStat =
+    stats.find((s) => s.season?.is_current) ||
+    [...stats].sort((a, b) => b.season_id - a.season_id)[0] ||
+    null
+
+  const posDev = player.position?.developer_name || ''
+  const isGoalkeeper = posDev.toUpperCase().includes('GOALKEEPER') || posDev === 'GK'
+
+  const statRows: Array<{ key: string; label: string }> = isGoalkeeper
+    ? [
+        { key: PLAYER_STAT_KEYS.APPEARANCES, label: 'Partidos' },
+        { key: PLAYER_STAT_KEYS.MINUTES_PLAYED, label: 'Minutos' },
+        { key: PLAYER_STAT_KEYS.CLEANSHEETS, label: 'Porterías a 0' },
+        { key: PLAYER_STAT_KEYS.SAVES, label: 'Paradas' },
+        { key: PLAYER_STAT_KEYS.YELLOWCARDS, label: 'Amarillas' },
+        { key: PLAYER_STAT_KEYS.REDCARDS, label: 'Rojas' },
+      ]
+    : [
+        { key: PLAYER_STAT_KEYS.GOALS, label: 'Goles' },
+        { key: PLAYER_STAT_KEYS.ASSISTS, label: 'Asistencias' },
+        { key: PLAYER_STAT_KEYS.APPEARANCES, label: 'Partidos' },
+        { key: PLAYER_STAT_KEYS.MINUTES_PLAYED, label: 'Minutos' },
+        { key: PLAYER_STAT_KEYS.SHOTS_ON_TARGET, label: 'Tiros a puerta' },
+        { key: PLAYER_STAT_KEYS.KEY_PASSES, label: 'Pases clave' },
+        { key: PLAYER_STAT_KEYS.TACKLES, label: 'Entradas' },
+        { key: PLAYER_STAT_KEYS.YELLOWCARDS, label: 'Amarillas' },
+        { key: PLAYER_STAT_KEYS.REDCARDS, label: 'Rojas' },
+      ]
+
+  const renderedStats = primaryStat
+    ? statRows
+        .map((r) => ({ ...r, value: statValue(primaryStat, r.key) }))
+        .filter((r) => r.value !== null && r.value !== 0)
+    : []
 
   return (
     <>
@@ -130,6 +167,29 @@ export default async function PlayerPage({ params: { playerId } }: PageProps) {
             </div>
           )}
         </section>
+
+        {/* Season statistics */}
+        {renderedStats.length > 0 && (
+          <section>
+            <div className="flex items-baseline justify-between gap-2 mb-4 flex-wrap">
+              <h2 className="md-heading">Estadísticas de temporada</h2>
+              {primaryStat?.season?.name && (
+                <span className="eyebrow">
+                  {primaryStat.season.name}
+                  {primaryStat.season.is_current ? ' · EN CURSO' : ''}
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {renderedStats.map((s) => (
+                <div key={s.key} className="md-card">
+                  <div className="eyebrow mb-1">{s.label}</div>
+                  <div className="font-display font-bold text-3xl tabular-nums">{s.value}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Teams history */}
         {player.teams && player.teams.length > 0 && (

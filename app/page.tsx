@@ -5,6 +5,7 @@ import { Footer } from '@/components/footer'
 import { FixtureCard } from '@/components/fixture-card'
 import { StaggerGrid } from '@/components/stagger-grid'
 import { CompetitionWidget } from '@/components/competition-widget'
+import { MyFavoritesSection } from '@/components/my-favorites-section'
 import { getFixturesByDate, getTodayFixtures, getUpcomingFixturesAcrossDays } from '@/lib/sportmonks/fixtures'
 import { getFeaturedLeagues, FEATURED_LEAGUE_IDS } from '@/lib/sportmonks/leagues'
 
@@ -76,6 +77,9 @@ export default async function HomePage() {
             </p>
           </div>
         </section>
+
+        {/* Personalized favorites feed (only renders if user has favorites) */}
+        <MyFavoritesSection />
 
         {/* Competition widget — editorial+classic hybrid */}
         {leagues.length > 0 && (
