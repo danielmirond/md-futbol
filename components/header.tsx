@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { SearchBar } from './search-bar'
 import { LivescoreTicker } from './livescore-ticker'
 import { ThemeToggle } from './theme-toggle'
+import { SportsMenu } from './sports-menu'
 
 export function Header() {
   return (
@@ -32,6 +33,7 @@ export function Header() {
                 {label}
               </Link>
             ))}
+            <SportsMenu />
           </nav>
 
           <div className="flex-1 flex justify-end items-center gap-2 min-w-0">
