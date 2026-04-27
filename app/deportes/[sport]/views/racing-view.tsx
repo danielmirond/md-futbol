@@ -22,13 +22,7 @@ export async function RacingView({ sport }: Props) {
 
   return (
     <>
-      <SportHero
-        eyebrow="CAMPEONATO MUNDIAL"
-        title={sport.name}
-        accent={sport.accent || '#E30613'}
-        subtitle={sport.tagline}
-        icon={sport.icon}
-      />
+      <SportHero eyebrow="CAMPEONATO MUNDIAL" sport={sport} subtitle={sport.tagline} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calendar */}

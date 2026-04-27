@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { SPORT_CATEGORIES, getSport } from '@/lib/sports/registry'
+import { SportLogo } from './espn/sport-logo'
 
 export function SportsMenu() {
   const [open, setOpen] = useState(false)
@@ -52,7 +53,7 @@ export function SportsMenu() {
                         onClick={() => setOpen(false)}
                         className="flex items-center gap-2 px-2 py-1.5 hover:bg-surface"
                       >
-                        <span className="text-base shrink-0">{s.icon}</span>
+                        <SportLogo sport={s} size={20} emojiClass="text-base" className="shrink-0" />
                         <span className="font-display font-semibold uppercase text-xs truncate">{s.name}</span>
                       </Link>
                     )

@@ -13,13 +13,7 @@ export async function TennisView({ sport }: Props) {
 
   return (
     <>
-      <SportHero
-        eyebrow="RANKING MUNDIAL"
-        title={sport.name}
-        accent={sport.accent || '#E30613'}
-        subtitle={sport.tagline}
-        icon={sport.icon}
-      />
+      <SportHero eyebrow="RANKING MUNDIAL" sport={sport} subtitle={sport.tagline} />
 
       {rankings.length === 0 ? (
         <div className="md-card text-center py-12">

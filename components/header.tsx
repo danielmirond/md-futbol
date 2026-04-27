@@ -3,6 +3,7 @@ import { SearchBar } from './search-bar'
 import { LivescoreTicker } from './livescore-ticker'
 import { ThemeToggle } from './theme-toggle'
 import { SportsMenu } from './sports-menu'
+import { MdLogo } from './md-logo'
 
 export function Header() {
   return (
@@ -10,9 +11,10 @@ export function Header() {
       <div className="md-bar" />
       <div className="bg-md-black text-white">
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center gap-4 justify-between">
-          <Link href="/" className="flex items-baseline gap-2 shrink-0">
-            <span className="font-display font-bold text-xl md:text-2xl uppercase tracking-tight">
-              MD <span className="text-md">Fútbol</span>
+          <Link href="/" className="flex items-center gap-3 shrink-0" aria-label="Mundo Deportivo · Fútbol">
+            <MdLogo sizeClass="text-base md:text-lg" className="h-8 md:h-9" />
+            <span className="hidden sm:inline font-display font-bold text-base md:text-lg uppercase tracking-tight text-white/70">
+              Fútbol
             </span>
           </Link>
 

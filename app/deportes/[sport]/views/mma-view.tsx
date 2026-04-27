@@ -17,13 +17,7 @@ export async function MmaView({ sport }: Props) {
 
   return (
     <>
-      <SportHero
-        eyebrow="CARTELERA"
-        title={sport.name}
-        accent={sport.accent || '#E30613'}
-        subtitle={sport.tagline}
-        icon={sport.icon}
-      />
+      <SportHero eyebrow="CARTELERA" sport={sport} subtitle={sport.tagline} />
 
       {events.length === 0 ? (
         <div className="md-card text-center py-12">
