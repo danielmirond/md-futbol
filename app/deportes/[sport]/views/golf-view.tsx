@@ -13,13 +13,7 @@ export async function GolfView({ sport }: Props) {
 
   return (
     <>
-      <SportHero
-        eyebrow="LEADERBOARD"
-        title={sport.name}
-        accent={sport.accent || '#E30613'}
-        subtitle={tournamentName || sport.tagline}
-        icon={sport.icon}
-      />
+      <SportHero eyebrow="LEADERBOARD" sport={sport} subtitle={tournamentName || sport.tagline} />
 
       {entries.length === 0 ? (
         <div className="md-card text-center py-12">

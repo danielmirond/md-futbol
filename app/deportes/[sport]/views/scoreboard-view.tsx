@@ -38,13 +38,7 @@ export async function ScoreboardView({ sport, date }: Props) {
 
   return (
     <>
-      <SportHero
-        eyebrow="DEPORTES · MULTI"
-        title={sport.name}
-        accent={sport.accent || '#E30613'}
-        subtitle={sport.tagline}
-        icon={sport.icon}
-      />
+      <SportHero eyebrow="DEPORTES · MULTI" sport={sport} subtitle={sport.tagline} />
 
       {/* Day nav */}
       <div className="flex items-center gap-2 overflow-x-auto">

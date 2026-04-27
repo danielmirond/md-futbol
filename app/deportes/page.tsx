@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SportLogo } from '@/components/espn/sport-logo'
 import { SPORTS, SPORT_CATEGORIES, getSport } from '@/lib/sports/registry'
 
 export const revalidate = 3600
@@ -44,7 +45,7 @@ export default function DeportesHubPage() {
                       href={`/deportes/${slug}`}
                       className="md-card flex items-center gap-3 hover:border-md transition-colors group"
                     >
-                      <span className="text-3xl md:text-4xl shrink-0">{s.icon}</span>
+                      <SportLogo sport={s} size={48} emojiClass="text-4xl" className="shrink-0" />
                       <div className="min-w-0 flex-1">
                         <div className="font-display font-bold uppercase text-base md:text-lg tracking-tight group-hover:text-md transition-colors">
                           {s.name}
